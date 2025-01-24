@@ -183,7 +183,7 @@ Function InstallIvanti () {
     Start-Process -FilePath msiexec.exe -ArgumentList "/i `"$extractedFilePath`" /quiet /norestart" -Wait -Verbose
 
     Write-Output "Waiting for Ivanti Agent install to complete...", ""
-    Start-Sleep -Seconds 60
+    #Start-Sleep -Seconds 60
 
     Write-Output "Ivanti Agent install complete...", ""
 
@@ -225,7 +225,7 @@ Function InstallPrinter () {
     Start-Process -FilePath msiexec.exe -ArgumentList "/i `"$extractedFilePath`" /quiet /norestart HOMEURL=https://realogy.printercloud.com AUTHORIZATION_CODE=991h51hz" -Wait -Verbose
 
     Write-Output "Waiting for PrinterLogic install to complete...", ""
-    Start-Sleep -Seconds 30
+    #Start-Sleep -Seconds 30
 
     Write-Output "PrinterLogic install complete...", ""
 
