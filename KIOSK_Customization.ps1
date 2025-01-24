@@ -245,6 +245,90 @@ Function InstallPrinter () {
 
 }
 
+# Function to setup screensaver
+Function SetupSCR () {
+    
+    # Define the URL of the download file and the destination path
+    $downloadUrl = "https://www.dropbox.com/scl/fi/dnwlw2pmwfykqp0dt048j/ScreenSaver.sCr?rlkey=2iisz8xhvmcufwdozfe5fx3du&st=e1i4rf0v&dl=1"
+    $destinationPath = "C:\Windows\Temp\ScreenSaver.scr"
+
+    # Download the file
+    Write-Output "Downloading AWRE Screensaver...", ""
+    Invoke-WebRequest -Uri $downloadUrl -OutFile $destinationPath
+
+    # Copy the file
+    Copy-Item -Path $destinationPath -Destination "C:\SCR\screensaver.scr" -Force -Verbose
+    Write-Output "File copied successfully to C:\SCR\screensaver.scr..."
+
+    # Get the current logged-in user
+    $user = Get-WmiObject -Class Win32_ComputerSystem | Select-Object -ExpandProperty Username
+
+    Write-Output "Current Logged-In User: $user"
+
+    # Create the user object and translate it to the SID
+    $objUser = New-Object System.Security.Principal.NTAccount($user)
+    $strSID = $objUser.Translate([System.Security.Principal.SecurityIdentifier])
+
+    Write-Output "Current Logged-In User SID: $strSID"
+    
+    New-Item -Path "registry::hkey_users\$($strSID.Value)\Software\Policies\Microsoft\Windows\Control Panel" -Force -ErrorAction SilentlyContinue -Verbose
+    New-Item -Path "registry::hkey_users\$($strSID.Value)\Software\Policies\Microsoft\Windows\Control Panel\Desktop" -Force -ErrorAction SilentlyContinue -Verbose
+
+    # Define registry path using current logged-in user's SID
+    $registryPath = "registry::hkey_users\$($strSID.Value)\Software\Policies\Microsoft\Windows\Control Panel\Desktop"
+
+    # Enable screensaver
+    New-ItemProperty -Path $registryPath -Name ScreenSaveActive -PropertyType String -Value 1 -Force -ErrorAction SilentlyContinue -Verbose
+
+    # Set the screensaver to C:\SCR\screensaver.scr
+    New-ItemProperty -Path $registryPath -Name SCRNSAVE.EXE -PropertyType String -Value 'C:\SCR\screensaver.scr' -Force -ErrorAction SilentlyContinue -Verbose
+        
+    # Set screensaver timeout to 15 minutes (900 seconds)
+    New-ItemProperty -Path $registryPath -Name ScreenSaveTimeOut -PropertyType String -Value 900 -Force -ErrorAction SilentlyContinue -Verbose
+
+    # Disable password requirement on resume
+    New-ItemProperty -Path $registryPath -Name ScreenSaverIsSecure -PropertyType String -Value 0 -Force -ErrorAction SilentlyContinue -Verbose
+
+    Write-Output "Screensaver settings updated for all users."
+
+}
+
+# Function to setup Restart Button on the desktop
+Function SetupRestart () {
+
+    # Define the URL of the download file and the destination path
+    $downloadUrl = "https://www.dropbox.com/scl/fi/9fp62uwu7uych6yqv8k8g/RebootButton.zip?rlkey=tzesfdfpivpv85aco9ppm1wy7&st=adbu9gwq&dl=1"
+    $destinationPath = "C:\Windows\Temp\RebootButton.zip"
+    $extractPath = "C:\SCR\RestartButton"
+
+    # Download the file
+    Write-Output "Downloading Restart Button files...", ""
+    Invoke-WebRequest -Uri $downloadUrl -OutFile $destinationPath
+
+    # Create the extraction directory if it doesn't exist
+    Write-Output "Verify extraction directory exist...", ""
+    if (Test-Path -Path $extractPath -Verbose) {
+        
+        Write-Output "Extraction directory exists...", ""
+
+    } else {
+
+        Write-Output "Extraction directory does not exist, creating $extractPath directory...", ""
+        New-Item -ItemType Directory -Path $extractPath -Force -Verbose
+
+    }
+
+    # Extract the ZIP file
+    Write-Output "Extracting Restart Button files to $extractPath...", ""
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    [System.IO.Compression.ZipFile]::ExtractToDirectory($destinationPath, $extractPath)
+
+    # Copy the file
+    Copy-Item -Path "C:\SCR\RestartButton\Restart Button.lnk" -Destination "C:\Users\Public\Desktop" -Force -Verbose
+    Write-Output "File copied successfully to C:\Users\Public\Desktop"
+
+}
+
 ## Start logging of script
 Start-Transcript -Path "$logfilePath" -Append
 
@@ -262,6 +346,12 @@ CreateSCRdir
 
 # Run function to delete existing shortcuts from Public Desktop
 ClearDesktop
+
+# Run function to setup screensaver
+SetupSCR
+
+# Run function to setup Restart Button on the desktop
+SetupRestart
 
 # Run function to create Chrome/Edge desktop shortcuts
 CreateChrome
