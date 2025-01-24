@@ -30,12 +30,26 @@ Function ClearDesktop () {
         
         }
 
-        Write-Output "All contents in $directory was deleted..."
+        Write-Output "All contents in $directory was deleted...", ""
     
     } else {
     
-        Write-Output "The directory $directory does not exist..."
+        Write-Output "The directory $directory does not exist...", ""
     
+    }
+
+    if (Test-Path "C:\Users\Agent\Desktop\Google Chrome.lnk") {
+
+        Write-Output "C:\Users\Agent\Desktop\Google Chrome.lnk exists...", ""
+
+        Remove-Item -Path "C:\Users\Agent\Desktop\Google Chrome.lnk" -Force -Verbose
+
+        Write-Output "C:\Users\Agent\Desktop\Google Chrome.lnk was deleted...", ""
+
+    } else {
+
+        Write-Output "C:\Users\Agent\Desktop\Google Chrome.lnk does not exist...", ""
+        
     }
 
 }
