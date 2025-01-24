@@ -144,6 +144,8 @@ Function HideRecycleBin () {
     Write-Output "Hiding Recycle Bin from the Desktop...", ""
     Set-ItemProperty -Path $regPath -Name $regKey -Value 1 -Force -Verbose
 
+    Start-Sleep -Seconds 60
+
 }
 
 
@@ -235,10 +237,10 @@ Function InstallPrinter () {
 Start-Transcript -Path "$logfilePath" -Append
 
 # Run function to download and install Ivanti
-InstallIvanti
+#InstallIvanti
 
 # Run function to download and install PrinterLogic
-InstallPrinter
+#InstallPrinter
 
 # Run function to hide Recycle Bin on the desktop
 HideRecycleBin
