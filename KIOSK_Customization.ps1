@@ -144,8 +144,6 @@ Function HideRecycleBin () {
     Write-Output "Hiding Recycle Bin from the Desktop...", ""
     Set-ItemProperty -Path $regPath -Name $regKey -Value 1 -Force -Verbose
 
-    Start-Sleep -Seconds 60
-
 }
 
 
@@ -185,7 +183,7 @@ Function InstallIvanti () {
     Start-Process -FilePath msiexec.exe -ArgumentList "/i `"$extractedFilePath`" /quiet /norestart" -Wait -Verbose
 
     Write-Output "Waiting for Ivanti Agent install to complete...", ""
-    #Start-Sleep -Seconds 60
+    Start-Sleep -Seconds 300
 
     Write-Output "Ivanti Agent install complete...", ""
 
@@ -227,7 +225,7 @@ Function InstallPrinter () {
     Start-Process -FilePath msiexec.exe -ArgumentList "/i `"$extractedFilePath`" /quiet /norestart HOMEURL=https://realogy.printercloud.com AUTHORIZATION_CODE=991h51hz" -Wait -Verbose
 
     Write-Output "Waiting for PrinterLogic install to complete...", ""
-    #Start-Sleep -Seconds 30
+    Start-Sleep -Seconds 30
 
     Write-Output "PrinterLogic install complete...", ""
 
@@ -237,10 +235,10 @@ Function InstallPrinter () {
 Start-Transcript -Path "$logfilePath" -Append
 
 # Run function to download and install Ivanti
-#InstallIvanti
+InstallIvanti
 
 # Run function to download and install PrinterLogic
-#InstallPrinter
+InstallPrinter
 
 # Run function to hide Recycle Bin on the desktop
 HideRecycleBin
