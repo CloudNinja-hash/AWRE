@@ -329,6 +329,40 @@ Function SetupRestart () {
 
 }
 
+# Function to Setup Autologin
+Function SetupAutologin () {
+
+    # Define the URL of the download file and the destination path
+    $downloadUrl = "https://download.sysinternals.com/files/AutoLogon.zip"
+    $destinationPath = "C:\Windows\Temp\AutoLogon.zip"
+    $extractPath = "C:\SCR\AutoLogon"
+
+    # Download the file
+    Write-Output "Downloading Autologin files...", ""
+    Invoke-WebRequest -Uri $downloadUrl -OutFile $destinationPath
+
+    # Create the extraction directory if it doesn't exist
+    Write-Output "Verify extraction directory exist...", ""
+    if (Test-Path -Path $extractPath -Verbose) {
+        
+        Write-Output "Extraction directory exists...", ""
+
+    } else {
+
+        Write-Output "Extraction directory does not exist, creating $extractPath directory...", ""
+        New-Item -ItemType Directory -Path $extractPath -Force -Verbose
+
+    }
+
+    # Extract the ZIP file
+    Write-Output "Extracting Autologin files to $extractPath...", ""
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    [System.IO.Compression.ZipFile]::ExtractToDirectory($destinationPath, $extractPath)
+
+    Start-Process "C:\scr\Autologon\Autologon64.exe" -ArgumentList "Agent","","@g3ntW0rkst@ti0n" -Wait -Verbose
+
+}
+
 ## Start logging of script
 Start-Transcript -Path "$logfilePath" -Append
 
@@ -405,16 +439,12 @@ Write-Output "Refresh the Start menu to apply changes...", ""
 Stop-Process -Name explorer -Force -Verbose
 Start-Process explorer -Verbose
 
+# Run function to Setup Autologin
+SetupAutologin
+
 # Set the password to never expire
 Write-Output "Set the password to never expire...", ""
-Set-LocalUser -Name "Agent" -PasswordNeverExpires 1 -UserMayChangePassword 0 -Verbose
-
-<#
-# Prevent the user from changing the password
-$User = ADSI
-$User.UserFlags = $User.UserFlags -bor 0x10000
-$User.SetInfo()
-#>
+Get-LocalUser -Name "Agent" | Set-LocalUser -PasswordNeverExpires $true -Verbose
 
 ## End logging
 Stop-Transcript | Out-Null
