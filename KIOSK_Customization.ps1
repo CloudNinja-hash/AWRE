@@ -359,7 +359,7 @@ Function SetupAutologin () {
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     [System.IO.Compression.ZipFile]::ExtractToDirectory($destinationPath, $extractPath)
 
-    Start-Process "C:\scr\Autologon\Autologon64.exe" -ArgumentList "Agent","","@g3ntW0rkst@ti0n" -Wait -Verbose
+    Start-Process "C:\scr\Autologon\Autologon64.exe" -ArgumentList "Agent","WorkGroup","@g3ntW0rkst@ti0n" -Wait -Verbose
 
 }
 
