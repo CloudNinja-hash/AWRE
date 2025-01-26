@@ -359,7 +359,19 @@ Function SetupAutologin () {
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     [System.IO.Compression.ZipFile]::ExtractToDirectory($destinationPath, $extractPath)
 
-    Start-Process "C:\scr\Autologon\Autologon64.exe" -ArgumentList "Agent","WorkGroup","@g3ntW0rkst@ti0n" -Wait -Verbose
+    Write-Output "Setting up Autologin...."
+    
+    try {
+
+        Start-Process "C:\scr\Autologon\Autologon64.exe" -ArgumentList "Agent","WorkGroup","@g3ntW0rkst@ti0n","/accepteula" -Wait -Verbose
+    
+        Write-Output "Autologin setup complete..."
+
+    } catch {
+
+        Write-Output "Autologin setup failed, please review logs..."
+
+    }
 
 }
 
