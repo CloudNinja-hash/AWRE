@@ -135,6 +135,7 @@ Function ClearBrowser () {
     New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\ClearBrowsingDataOnExitList" -Name "7" -PropertyType String -Value "site_settings" -Force -ErrorAction SilentlyContinue -Verbose
     New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\ClearBrowsingDataOnExitList" -Name "8" -PropertyType String -Value "hosted_app_data" -Force -ErrorAction SilentlyContinue -Verbose
 
+    # Create file to stop the creation of Chrome shortcut on the C:\Users\Agent\Desktop directory
     New-Item -Path 'C:\Users\Agent\AppData\Local\Google\Chrome\User Data\First Run' -ItemType File -Force -Verbose
 
     Write-Output "Creating registry path for Edge settings...", ""
@@ -146,6 +147,10 @@ Function ClearBrowser () {
     New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Edge" -Name "AutofillAddressEnabled" -PropertyType DWord -Value "0x00000000" -Force -ErrorAction SilentlyContinue -Verbose
     New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Edge" -Name "AutofillCreditCardEnabled" -PropertyType DWord -Value "0x00000000" -Force -ErrorAction SilentlyContinue -Verbose
     New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Edge" -Name "HideFirstRunExperience" -PropertyType DWord -Value "0x00000001" -Force -ErrorAction SilentlyContinue -Verbose
+
+    # Create file to stop the creation of Edge shortcut on the C:\Users\Agent\Desktop directory
+    New-Item -Path 'C:\Users\Agent\AppData\Local\Microsoft\Edge\User Data\First Run' -ItemType File -Force -Verbose
+    New-Item -Path 'C:\Users\Agent\AppData\Local\Microsoft\Edge\User Data\FirstLaunchAfterInstallation' -ItemType File -Force -Verbose
 
 }
 
