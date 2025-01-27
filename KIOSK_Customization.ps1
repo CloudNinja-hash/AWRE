@@ -384,6 +384,50 @@ Function SetupAutologin () {
 
 }
 
+# Function to install Chrome/Edge ADMX files to disable First-Time run and additional shortcuts in C:\Users\Agent\Desktop directory
+Function InstallADMX () {
+
+    # Define the URL of the download file and the destination path
+    $downloadUrl = "https://www.dropbox.com/scl/fi/m1ekl35wye0dqz77ykv3e/BrowserADMXFiles.zip?rlkey=g0wcoo4m09ernptfwx76keisu&st=zxmq975n&dl=1"
+    $destinationPath = "C:\Windows\Temp\BrowserADMXFiles.zip"
+    $extractPath = "C:\SCR\BrowserADMX"
+    $copyPathADMX = "C:\Windows\PolicyDefinitions"
+    $copyPathADML = "C:\Windows\PolicyDefinitions\en-US"
+
+    # Download the file
+    Write-Output "Downloading Autologin files...", ""
+    Invoke-WebRequest -Uri $downloadUrl -OutFile $destinationPath
+
+    # Create the extraction directory if it doesn't exist
+    Write-Output "Verify extraction directory exist...", ""
+    if (Test-Path -Path $extractPath -Verbose) {
+        
+        Write-Output "Extraction directory exists...", ""
+
+    } else {
+
+        Write-Output "Extraction directory does not exist, creating $extractPath directory...", ""
+        New-Item -ItemType Directory -Path $extractPath -Force -Verbose
+
+    }
+
+    # Extract the ZIP file
+    Write-Output "Extracting Autologin files to $extractPath...", ""
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    [System.IO.Compression.ZipFile]::ExtractToDirectory($destinationPath, $extractPath)
+
+    # Copy the file
+    Write-Output "Copying chrome.admx/msedge.admx file to $copyPathADMX...", ""
+    Copy-Item -Path "C:\SCR\BrowserADMX\chrome.admx" -Destination $copyPathADMX -Force -Verbose
+    Copy-Item -Path "C:\SCR\BrowserADMX\msedge.admx" -Destination $copyPathADMX -Force -Verbose
+
+    Write-Output "Copying chrome.adml/msedge.adml file to $copyPathADMX...", ""
+    Copy-Item -Path "C:\SCR\BrowserADMX\chrome.adml" -Destination $copyPathADML -Force -Verbose
+    Copy-Item -Path "C:\SCR\BrowserADMX\msedge.adml" -Destination $copyPathADML -Force -Verbose
+
+}
+
+
 ## Start logging of script
 Start-Transcript -Path "$logfilePath" -Append
 
@@ -407,6 +451,9 @@ SetupSCR
 
 # Run function to setup Restart Button on the desktop
 SetupRestart
+
+# Run function to install Chrome/Edge ADMX files to disable First-Time run and additional shortcuts in C:\Users\Agent\Desktop directory
+InstallADMX
 
 # Run function to create Chrome/Edge desktop shortcuts
 CreateChrome
