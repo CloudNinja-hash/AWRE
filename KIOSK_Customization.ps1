@@ -124,6 +124,8 @@ Function ClearBrowser () {
 
     Write-Output "Creating keys to Clear Browser Cache on close for Chrome...", ""
     New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome" -Name "SkipFirstRunUI" -PropertyType DWord -Value "1" -Force -ErrorAction SilentlyContinue -Verbose
+    New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome" -Name "PromotionalTabsEnabled" -PropertyType DWord -Value "0" -Force -ErrorAction SilentlyContinue -Verbose
+    New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome" -Name "DefaultBrowserSettingEnabled" -PropertyType DWord -Value "0" -Force -ErrorAction SilentlyContinue -Verbose
     New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\ClearBrowsingDataOnExitList" -Name "1" -PropertyType String -Value "browsing_history" -Force -ErrorAction SilentlyContinue -Verbose
     New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\ClearBrowsingDataOnExitList" -Name "2" -PropertyType String -Value "download_history" -Force -ErrorAction SilentlyContinue -Verbose
     New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\ClearBrowsingDataOnExitList" -Name "3" -PropertyType String -Value "cookies_and_other_site_data" -Force -ErrorAction SilentlyContinue -Verbose
@@ -133,6 +135,8 @@ Function ClearBrowser () {
     New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\ClearBrowsingDataOnExitList" -Name "7" -PropertyType String -Value "site_settings" -Force -ErrorAction SilentlyContinue -Verbose
     New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\ClearBrowsingDataOnExitList" -Name "8" -PropertyType String -Value "hosted_app_data" -Force -ErrorAction SilentlyContinue -Verbose
 
+    New-Item -Path 'C:\Users\Agent\AppData\Local\Google\Chrome\User Data\First Run' -ItemType File -Force -Verbose
+
     Write-Output "Creating registry path for Edge settings...", ""
     New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Edge" -Force -ErrorAction SilentlyContinue -Verbose
 
@@ -141,7 +145,7 @@ Function ClearBrowser () {
     New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Edge" -Name "ClearBrowsingDataOnExit" -PropertyType DWord -Value "0x00000001" -Force -ErrorAction SilentlyContinue -Verbose
     New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Edge" -Name "AutofillAddressEnabled" -PropertyType DWord -Value "0x00000000" -Force -ErrorAction SilentlyContinue -Verbose
     New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Edge" -Name "AutofillCreditCardEnabled" -PropertyType DWord -Value "0x00000000" -Force -ErrorAction SilentlyContinue -Verbose
-    New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Edge" -Name "HideFirstRunExperience" -PropertyType DWord -Value "0x00000000" -Force -ErrorAction SilentlyContinue -Verbose
+    New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Edge" -Name "HideFirstRunExperience" -PropertyType DWord -Value "0x00000001" -Force -ErrorAction SilentlyContinue -Verbose
 
 }
 
