@@ -514,5 +514,9 @@ SetupAutologin
 Write-Output "Set the password to never expire...", ""
 Get-LocalUser -Name "Agent" | Set-LocalUser -PasswordNeverExpires $true -Verbose
 
+# Update registy to latest Kiosk version
+New-Item -Path "HKLM:\SOFTWARE\ImageVersion" -Force -Verbose
+New-ItemProperty -Path "HKLM:\SOFTWARE\ImageVersion" -Name "Agent Workstation" -PropertyType String -Value "Agent 2025 V2.0" -Force -Verbose
+
 ## End logging
 Stop-Transcript | Out-Null
