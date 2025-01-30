@@ -174,7 +174,7 @@ Function HideRecycleBin () {
 Function InstallIvanti () {
     
     # Define the URL of the download file and the destination path
-    $downloadUrl = "https://www.dropbox.com/scl/fi/v873cxvki3fn3vg2mz9jx/KIOSK_WIN_Agent_2022_SU6.zip?rlkey=wu9d7e6pfvq8z852c837mdcvl&st=xc8xfjdq&dl=1"
+    $downloadUrl = "https://www.dropbox.com/scl/fi/v873cxvki3fn3vg2mz9jx/KIOSK_WIN_Agent_2022_SU6.zip?rlkey=wu9d7e6pfvq8z852c837mdcvl&st=3h5ov79a&dl=1"
     $destinationPath = "C:\Windows\Temp\KIOSK_WIN_Agent_2022_SU6.zip"
     $extractPath = "C:\Windows\Temp\KIOSK_WIN_Agent_2022_SU6"
 
@@ -202,11 +202,11 @@ Function InstallIvanti () {
 
     # Start the process with the extracted file
     Write-Output "Installing Ivanti Agent...", ""
-    $extractedFilePath = Join-Path $extractPath ('KIOSK_WIN_Agent_2022_SU6.msi')
-    Start-Process -FilePath msiexec.exe -ArgumentList "/i `"$extractedFilePath`" /quiet /norestart" -Wait -Verbose
+    $extractedFilePath = Join-Path $extractPath ('SelfContainedEpmAgentInstall.msi')
+    Start-Process -FilePath msiexec.exe -ArgumentList "/i `"$extractedFilePath`" /qn" -Wait -Verbose
 
     Write-Output "Waiting for Ivanti Agent install to complete...", ""
-    Start-Sleep -Seconds 300
+    Start-Sleep -Seconds 600
 
     Write-Output "Ivanti Agent install complete...", ""
 
