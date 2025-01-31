@@ -596,8 +596,8 @@ Stop-Process -Name explorer -Force -Verbose
 Start-Process explorer -Verbose
 
 # Set the password to never expire
-Write-Output "Set the password to never expire...", ""
-Get-LocalUser -Name "Agent" | Set-LocalUser -PasswordNeverExpires $true -Verbose
+#Write-Output "Set the password to never expire...", ""
+#Get-LocalUser -Name "Agent" | Set-LocalUser -PasswordNeverExpires $true -Verbose
 
 # Run function to Setup Autologin
 SetupAutologin
