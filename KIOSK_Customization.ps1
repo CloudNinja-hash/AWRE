@@ -519,11 +519,11 @@ Start-Transcript -Path "$logfilePath" -Append
 # Run function to set the time zone based on the state abbreviation in the device name
 SetTimeZone
 
-# Run function to download and install Ivanti
-InstallIvanti
-
 # Run function to download and install PrinterLogic
 InstallPrinter
+
+# Run function to download and install Ivanti
+InstallIvanti
 
 # Run function to hide Recycle Bin on the desktop
 HideRecycleBin
@@ -595,12 +595,12 @@ Write-Output "Refresh the Start menu to apply changes...", ""
 Stop-Process -Name explorer -Force -Verbose
 Start-Process explorer -Verbose
 
-# Run function to Setup Autologin
-SetupAutologin
-
 # Set the password to never expire
 Write-Output "Set the password to never expire...", ""
 Get-LocalUser -Name "Agent" | Set-LocalUser -PasswordNeverExpires $true -Verbose
+
+# Run function to Setup Autologin
+SetupAutologin
 
 # Update registy to latest Kiosk version
 New-Item -Path "HKLM:\SOFTWARE\ImageVersion" -Force -Verbose
