@@ -49,7 +49,7 @@ Function CreateEdge () {
 }
 
 
-
+<##
 ## If Chrome does not exist, create it.
 if (-not($testChrome)) {
     
@@ -78,3 +78,8 @@ else {
     Write-Output "Cannot create $pathEdge because file already exists...", ""
 
 }
+##>
+
+CreateChrome
+CreateEdge
+
