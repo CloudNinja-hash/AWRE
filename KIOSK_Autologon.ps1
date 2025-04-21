@@ -1,5 +1,5 @@
 
-param( $Password )
+param($Password)
 
 $securePWD = ConvertTo-SecureString $Password -AsPlainText -Force
 
@@ -19,7 +19,7 @@ $localAcct = Get-LocalUser -Name "Agent"
 
 # Change the password
 Write-Output "Changing Agent password...", ""
-$localAcct | Set-LocalUser -Password $securePWD -AccountNeverExpires -PasswordNeverExpires -Verbose
+$localAcct | Set-LocalUser -Password $securePWD -AccountNeverExpires -PasswordNeverExpires $true -Verbose
 
 Write-Output "Updating Autologon settings...", ""
 Start-Process -FilePath $destinationPath -ArgumentList "/accepteula","Agent","WorkGroup",$Password
