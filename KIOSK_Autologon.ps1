@@ -1,4 +1,3 @@
-
 param($Password)
 
 $securePWD = ConvertTo-SecureString $Password -AsPlainText -Force
