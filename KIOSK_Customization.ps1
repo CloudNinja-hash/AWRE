@@ -20,7 +20,7 @@ Function ClearDesktop () {
         Write-Output "The directory $directory exists...", ""
 
         # Get all files and directories in the specified path
-        $items = Get-ChildItem -Path $directory -Exclude "TeamViewer.lnk"
+        $items = Get-ChildItem -Path $directory -Exclude TeamViewer.lnk -Recurse
 
         # Loop through each item and remove it
         Write-Output "Deleting existing Desktop Shortcuts in $directory...", ""
