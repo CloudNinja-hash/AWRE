@@ -20,6 +20,8 @@ $localAcct = Get-LocalUser -Name "Agent"
 Write-Output "Changing Agent password...", ""
 $localAcct | Set-LocalUser -Password $securePWD -AccountNeverExpires -PasswordNeverExpires $true -Verbose
 
+Start-Sleep -Seconds 30
+
 Write-Output "Updating Autologon settings...", ""
 Start-Process -FilePath $destinationPath -ArgumentList "/accepteula","Agent","WorkGroup",$Password
 
