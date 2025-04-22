@@ -335,6 +335,7 @@ Function SetupRestart () {
 
 }
 
+<##
 # Function to Setup Autologin
 Function SetupAutologin () {
 
@@ -380,6 +381,7 @@ Function SetupAutologin () {
     }
 
 }
+##>
 
 # Function to install Chrome/Edge ADMX files to disable First-Time run and additional shortcuts in C:\Users\Agent\Desktop directory
 Function InstallADMX () {
@@ -392,7 +394,7 @@ Function InstallADMX () {
     $copyPathADML = "C:\Windows\PolicyDefinitions\en-US"
 
     # Download the file
-    Write-Output "Downloading Autologin files...", ""
+    Write-Output "Downloading Chrome/Edge ADMX files...", ""
     Invoke-WebRequest -Uri $downloadUrl -OutFile $destinationPath
 
     # Create the extraction directory if it doesn't exist
@@ -409,7 +411,7 @@ Function InstallADMX () {
     }
 
     # Extract the ZIP file
-    Write-Output "Extracting Autologin files to $extractPath...", ""
+    Write-Output "Extracting  Chrome/Edge ADMX files to $extractPath...", ""
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     [System.IO.Compression.ZipFile]::ExtractToDirectory($destinationPath, $extractPath)
 
@@ -579,16 +581,17 @@ powercfg -setactive SCHEME_CURRENT
 
 # Hide Sleep and Shutdown options from the Start menu
 Write-Output "Hide Sleep and Shutdown options from the Start menu...", ""
-$registryPath = "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\Start\HideSleep"
-New-ItemProperty -Path $registryPath -Name "Value" -Value 1 -PropertyType DWord -Force -Verbose
+New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\Start\HideSleep" -Name "Value" -Value 1 -PropertyType DWord -Force -Verbose
 
-$registryPath = "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\Start\HideShutDown"
-New-ItemProperty -Path $registryPath -Name "Value" -Value 1 -PropertyType DWord -Force -Verbose
+New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\Start\HideShutDown" -Name "Value" -Value 1 -PropertyType DWord -Force -Verbose
 
 # Disable Fast Startup
 Write-Output "Disable Fast Startup...", ""
-$registryPath = "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\Start\HideShutDown"
-Set-ItemProperty -Path $registryPath -Name "HiberbootEnabled" -Value 0 -Type DWORD -Force -Verbose
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\Start\HideShutDown" -Name "HiberbootEnabled" -Value 0 -Type DWORD -Force -Verbose
+
+# Disable UAC
+Write-Output "Disable UAC...", ""
+Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableLUA" -Value 0 -Type DWORD -Force -Verbose
 
 # Refresh the Start menu to apply changes
 Write-Output "Refresh the Start menu to apply changes...", ""
@@ -600,7 +603,7 @@ Start-Process explorer -Verbose
 #Get-LocalUser -Name "Agent" | Set-LocalUser -PasswordNeverExpires $true -Verbose
 
 # Run function to Setup Autologin
-SetupAutologin
+#SetupAutologin
 
 # Update registy to latest Kiosk version
 New-Item -Path "HKLM:\SOFTWARE\ImageVersion" -Force -Verbose
