@@ -339,7 +339,9 @@ Function SetupRestart () {
 }
 
 # Function to Setup Autologin
-Function SetupAutologin ($pwd) {
+Function SetupAutologin () {
+
+    param($pwd)
 
     $securePWD = ConvertTo-SecureString $pwd -AsPlainText -Force
 
