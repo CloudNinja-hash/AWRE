@@ -337,7 +337,7 @@ Function SetupRestart () {
     Write-Output "File copied successfully to C:\Users\Public\Desktop"
 
 }
-
+<##
 # Function to Setup Autologin
 Function SetupAutologin () {
 
@@ -371,7 +371,7 @@ Function SetupAutologin () {
     $pwd = $null
 
 }
-
+##>
 # Function to install Chrome/Edge ADMX files to disable First-Time run and additional shortcuts in C:\Users\Agent\Desktop directory
 Function InstallADMX () {
 
@@ -592,7 +592,33 @@ New-Item -Path "HKLM:\SOFTWARE\ImageVersion" -Force -Verbose
 New-ItemProperty -Path "HKLM:\SOFTWARE\ImageVersion" -Name "Agent Workstation" -PropertyType String -Value "Agent 2025 V2.0" -Force -Verbose
 
 # Run the function to set up Autologin
-SetupAutologin -pwd $Password
+#SetupAutologin -pwd $Password
+
+$securePWD = ConvertTo-SecureString $Password -AsPlainText -Force
+
+# Define the URL of the download file and the destination path
+$downloadUrl = "https://dl.dropboxusercontent.com/scl/fi/7grf0rhauao2e0xiust40/Autologon64.exe?rlkey=v2i49l93acyuhlkp1t1fggrpl&st=vqs1m2u3"
+$destinationPath = "C:\Windows\Temp\Autologon64.exe"
+
+# Download the file
+Write-Output "Downloading Autologon64.exe...", ""
+Invoke-WebRequest -Uri $downloadUrl -OutFile $destinationPath -Verbose
+
+# Get the Agent account
+Write-Output "Getting Agent account info...", ""
+$localAcct = Get-LocalUser -Name "Agent"
+
+# Change the password
+Write-Output "Changing Agent password...", ""
+$localAcct | Set-LocalUser -Password $securePWD -AccountNeverExpires -PasswordNeverExpires $true -Verbose
+
+Start-Sleep -Seconds 60
+
+Write-Output "Updating Autologon settings...", ""
+Start-Process -FilePath $destinationPath -ArgumentList "/accepteula","Agent","WorkGroup",$Password
+
+$securePWD = $null
+$Password = $null
 
 ## End logging
 Stop-Transcript | Out-Null
