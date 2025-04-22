@@ -584,12 +584,12 @@ Write-Output "Refresh the Start menu to apply changes...", ""
 Stop-Process -Name explorer -Force -Verbose
 Start-Process explorer -Verbose
 
-# Run the function to set up Autologin
-SetupAutologin
-
 # Update registry to the latest Kiosk version
 New-Item -Path "HKLM:\SOFTWARE\ImageVersion" -Force -Verbose
 New-ItemProperty -Path "HKLM:\SOFTWARE\ImageVersion" -Name "Agent Workstation" -PropertyType String -Value "Agent 2025 V2.0" -Force -Verbose
+
+# Run the function to set up Autologin
+SetupAutologin
 
 ## End logging
 Stop-Transcript | Out-Null
