@@ -339,9 +339,9 @@ Function SetupRestart () {
 }
 
 # Function to Setup Autologin
-Function SetupAutologin () {
+Function SetupAutologin ($pwd) {
 
-    $securePWD = ConvertTo-SecureString $Password -AsPlainText -Force
+    $securePWD = ConvertTo-SecureString $pwd -AsPlainText -Force
 
     # Define the URL of the download file and the destination path
     $downloadUrl = "https://dl.dropboxusercontent.com/scl/fi/7grf0rhauao2e0xiust40/Autologon64.exe?rlkey=v2i49l93acyuhlkp1t1fggrpl&st=vqs1m2u3"
@@ -362,10 +362,11 @@ Function SetupAutologin () {
     Start-Sleep -Seconds 60
 
     Write-Output "Updating Autologon settings...", ""
-    Start-Process -FilePath $destinationPath -ArgumentList "/accepteula","Agent","WorkGroup",$Password
+    Start-Process -FilePath $destinationPath -ArgumentList "/accepteula","Agent","WorkGroup",$pwd
 
     $securePWD = $null
     $Password = $null
+    $pwd = $null
 
 }
 
@@ -589,7 +590,7 @@ New-Item -Path "HKLM:\SOFTWARE\ImageVersion" -Force -Verbose
 New-ItemProperty -Path "HKLM:\SOFTWARE\ImageVersion" -Name "Agent Workstation" -PropertyType String -Value "Agent 2025 V2.0" -Force -Verbose
 
 # Run the function to set up Autologin
-SetupAutologin
+SetupAutologin -pwd $Password
 
 ## End logging
 Stop-Transcript | Out-Null
