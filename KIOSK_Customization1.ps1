@@ -207,7 +207,7 @@ Function InstallIvanti () {
     Start-Process -FilePath msiexec.exe -ArgumentList "/i `"$extractedFilePath`" /qn" -Wait -Verbose
 
     Write-Output "Waiting for Ivanti Agent install to complete...", ""
-    Start-Sleep -Seconds 30
+    Start-Sleep -Seconds 15
 
     Write-Output "Ivanti Agent install complete...", ""
 
