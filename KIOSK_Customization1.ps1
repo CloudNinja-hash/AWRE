@@ -175,9 +175,9 @@ Function HideRecycleBin () {
 Function InstallIvanti () {
     
     # Define the URL of the download file and the destination path
-    $downloadUrl = "https://www.dropbox.com/scl/fi/v873cxvki3fn3vg2mz9jx/KIOSK_WIN_Agent_2022_SU6.zip?rlkey=wu9d7e6pfvq8z852c837mdcvl&st=3h5ov79a&dl=1"
-    $destinationPath = "C:\Windows\Temp\KIOSK_WIN_Agent_2022_SU6.zip"
-    $extractPath = "C:\Windows\Temp\KIOSK_WIN_Agent_2022_SU6"
+    $downloadUrl = "https://sacrpprdsculrsivanti01.blob.core.windows.net/ldshares3/IvantiEBA/KIOSK%20WIN%20Agent%202022_SU7.zip"
+    $destinationPath = "C:\Windows\Temp\KIOSK_WIN_Agent_2022_SU7.zip"
+    $extractPath = "C:\Windows\Temp\KIOSK_WIN_Agent_2022_SU7"
 
     # Download the file
     Write-Output "Downloading Ivanti Agent installer...", ""
