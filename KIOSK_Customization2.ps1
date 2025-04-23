@@ -20,7 +20,7 @@ Write-Output "", "Running Ivanti Policy Sync...", ""
 Start-Process -FilePath "C:\Program Files (x86)\Ivanti\EPM Agent\SWD\PolicySync.exe" -Wait
 
 Write-Output "Running Ivanti Security Scan...", ""
-Start-Process -FilePath "C:\Program Files (x86)\Ivanti\EPM Agent\Patch Management\vulscan.exe" -ArgumentList "/showui" -Wait
+Start-Process -FilePath "C:\Program Files (x86)\Ivanti\EPM Agent\Patch Management\vulscan.exe" -ArgumentList "/scan=3 /showui" -Wait
 
 # Download the file
 Write-Output "Downloading Autologon64.exe...", ""
