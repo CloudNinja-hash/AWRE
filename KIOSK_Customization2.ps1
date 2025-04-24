@@ -15,13 +15,6 @@ $logfilePath = "C:\LOG_Kiosk_Customization2.txt"
 ## Start logging of script
 Start-Transcript -Path "$logfilePath" -Append
 
-# Running Ivanti scans
-Write-Output "", "Running Ivanti Policy Sync...", ""
-Start-Process -FilePath "C:\Program Files (x86)\Ivanti\EPM Agent\SWD\PolicySync.exe" -Wait
-
-Write-Output "Running Ivanti Security Scan...", ""
-Start-Process -FilePath "C:\Program Files (x86)\Ivanti\EPM Agent\Patch Management\vulscan.exe" -ArgumentList "/showui"
-
 # Download the file
 Write-Output "Downloading Autologon64.exe...", ""
 Invoke-WebRequest -Uri $downloadUrl -OutFile $destinationPath -Verbose
@@ -43,6 +36,13 @@ $downloadUrl = $null
 $destinationPath = $null
 $securePWD = $null
 $Password = $null
+
+# Running Ivanti scans
+Write-Output "", "Running Ivanti Policy Sync...", ""
+Start-Process -FilePath "C:\Program Files (x86)\Ivanti\EPM Agent\SWD\PolicySync.exe"
+
+Write-Output "Running Ivanti Security Scan...", ""
+Start-Process -FilePath "C:\Program Files (x86)\Ivanti\EPM Agent\Patch Management\vulscan.exe" -ArgumentList "/showui"
 
 ## End logging
 Stop-Transcript | Out-Null
