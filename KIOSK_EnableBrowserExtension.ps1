@@ -41,3 +41,10 @@ New-ItemProperty -Path $chromeExtPath -Name "1" -PropertyType String -Value "$ch
 New-ItemProperty -Path $chromeExtPath -Name "2" -PropertyType String -Value "$chromeAdobeReaderID;$chromeUpdateURL" -Force
 
 New-ItemProperty -Path $chromeExtPath -Name "3" -PropertyType String -Value "$chromeWebexID;$chromeUpdateURL" -Force
+
+
+Start-Process -FilePath "C:\Program Files\Google\Chrome\Application\chrome.exe"
+
+Start-Sleep -Seconds 10
+
+Stop-Process -Name chrome -Force
