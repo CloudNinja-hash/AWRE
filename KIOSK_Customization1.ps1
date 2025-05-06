@@ -499,6 +499,66 @@ Function SetTimeZone () {
 }
 
 
+# Function to enable browser extensions for Edge/Chrome
+Function EnableBrowserExtension {
+
+    # Define registry path for Edge Extension Install Force List
+    $edgeExtPath = "HKLM:\SOFTWARE\Policies\Microsoft\Edge\ExtensionInstallForcelist"
+
+    # Define Edge Update URL
+    $edgeUpdateURL = "https://edge.microsoft.com/extensionwebstorebase/v1/crx"
+
+    # Define Edge Extension IDs
+    $edgePrinterLogicID = "cpbdlogdokiacaifpokijfinplmdiapa"
+    $edgeAdobeReaderID = "elhekieabhbkpmcefcoobjddigjcaadp"
+    $edgeWebexID = "cmihkeafcknlomclapaddfljaeegfbdl"
+
+
+    # Define registry path for Chrome Extension Install Force List
+    $chromeExtPath = "HKLM:\SOFTWARE\Policies\Google\Chrome\ExtensionInstallForcelist"
+
+    # Define Chrome Update URL
+    $chromeUpdateURL = "https://clients2.google.com/service/update2/crx"
+
+    # Define Chrome Extension IDs
+    $chromePrinterLogicID = "bfgjjammlemhdcocpejaompfoojnjjfn"
+    $chromeAdobeReaderID = "efaidnbmnnnibpcajpcglclefindmkaj"
+    $chromeWebexID = "jlhmfgmfgeifomenelglieieghnjghma"
+
+
+    # Verify if Edge registry path exists, create if not found
+    if ( !(Test-Path -Path $edgeExtPath) ) {
+
+        New-Item -Path $edgeExtPath -Force
+
+    }
+
+    # Create Edge registry STRING for each extension
+    New-ItemProperty -Path $edgeExtPath -Name "1" -PropertyType String -Value "$edgePrinterLogicID;$edgeUpdateURL" -Force
+
+    New-ItemProperty -Path $edgeExtPath -Name "2" -PropertyType String -Value "$edgeAdobeReaderID;$edgeUpdateURL" -Force
+
+    New-ItemProperty -Path $edgeExtPath -Name "3" -PropertyType String -Value "$edgeWebexID;$edgeUpdateURL" -Force
+
+
+    # Verify if Chrome registry path exists, create if not found
+    if ( !(Test-Path -Path $chromeExtPath) ) {
+
+        New-Item -Path $chromeExtPath -Force
+
+    }
+
+    # Create Edge registry STRING for each extension
+    New-ItemProperty -Path $chromeExtPath -Name "1" -PropertyType String -Value "$chromePrinterLogicID;$chromeUpdateURL" -Force
+
+    New-ItemProperty -Path $chromeExtPath -Name "2" -PropertyType String -Value "$chromeAdobeReaderID;$chromeUpdateURL" -Force
+
+    New-ItemProperty -Path $chromeExtPath -Name "3" -PropertyType String -Value "$chromeWebexID;$chromeUpdateURL" -Force
+
+}
+
+
+
 ## Start logging of script
 Start-Transcript -Path "$logfilePath" -Append
 
@@ -535,6 +595,9 @@ CreateEdge
 
 # Run function to Clear Browser cache on close for Edge/Chrome
 ClearBrowser
+
+# Run function to enable browser extensions for Edge/Chrome
+EnableBrowserExtension
 
 # Disable the power button
 Write-Output "Disabling the Power Button...", ""
