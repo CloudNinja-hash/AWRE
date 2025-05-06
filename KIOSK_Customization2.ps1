@@ -15,6 +15,9 @@ $logfilePath = "C:\LOG_Kiosk_Customization2.txt"
 ## Start logging of script
 Start-Transcript -Path "$logfilePath" -Append
 
+# Launch Chrome for the firs time to clear the Adobe Reader pop-up
+Start-Process -FilePath "C:\Program Files\Google\Chrome\Application\chrome.exe"
+
 # Download the file
 Write-Output "Downloading Autologon64.exe...", ""
 Invoke-WebRequest -Uri $downloadUrl -OutFile $destinationPath -Verbose
@@ -43,6 +46,9 @@ Start-Process -FilePath "C:\Program Files (x86)\Ivanti\EPM Agent\SWD\PolicySync.
 
 Write-Output "Running Ivanti Security Scan...", ""
 Start-Process -FilePath "C:\Program Files (x86)\Ivanti\EPM Agent\Patch Management\vulscan.exe" -ArgumentList "/showui"
+
+# Close Chrome that was opened earlier
+Stop-Process -Name chrome -Force
 
 ## End logging
 Stop-Transcript | Out-Null
