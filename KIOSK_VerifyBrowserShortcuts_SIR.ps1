@@ -1,5 +1,5 @@
 
-$CBDeskURL = 'https://realogy.okta.com'
+$CBDeskURL = 'https://dashboard.sothebysrealty.com'
 
 
 $pathChrome = 'C:\Users\Public\Desktop\Chrome.lnk'
