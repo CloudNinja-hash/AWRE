@@ -422,7 +422,7 @@ Function SetTimeZone () {
         "AL" = "Central"; "AR" = "Central"; "IL" = "Central"; "IN" = "Central"; "IA" = "Central"; 
         "KS" = "Central"; "KY" = "Central"; "LA" = "Central"; "MN" = "Central"; "MS" = "Central"; "MO" = "Central"; 
         "NE" = "Central"; "OK" = "Central"; "TN" = "Central"; "TX" = "Central"; "WI" = "Central";
-        "AZ" = "Mountain"; "CO" = "Mountain"; "ID" = "Mountain"; "MT" = "Mountain"; 
+        "AZ" = "USMountain"; "CO" = "Mountain"; "ID" = "Mountain"; "MT" = "Mountain"; 
         "NM" = "Mountain"; "ND" = "Mountain"; "SD" = "Mountain"; "UT" = "Mountain"; "WY" = "Mountain";
         "CA" = "Pacific"; "NV" = "Pacific"; "OR" = "Pacific"; "WA" = "Pacific";
         "AK" = "Alaska";
@@ -463,6 +463,14 @@ Function SetTimeZone () {
                 Write-Output "Setting $timeZone time zone...", ""
 
                 Set-TimeZone -Id 'Mountain Standard Time' -Verbose
+
+            }
+
+            USMountain {
+
+                Write-Output "Setting $timeZone time zone...", ""
+
+                Set-TimeZone -Id 'US Mountain Standard Time' -Verbose
 
             }
 
