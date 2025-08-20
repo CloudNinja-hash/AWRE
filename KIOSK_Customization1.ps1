@@ -701,9 +701,10 @@ New-ItemProperty -Path "HKLM:\SOFTWARE\ImageVersion" -Name "Agent Workstation" -
 # Function to log off Agent
 Logoff-Agent
 
-Start-Sleep -Seconds 5
+Start-Sleep -Seconds 3
 
 ## End logging
 Stop-Transcript | Out-Null
 
 Restart-Computer
+
