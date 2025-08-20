@@ -698,16 +698,5 @@ Start-Process explorer -Verbose
 New-Item -Path "HKLM:\SOFTWARE\ImageVersion" -Force -Verbose
 New-ItemProperty -Path "HKLM:\SOFTWARE\ImageVersion" -Name "Agent Workstation" -PropertyType String -Value "Agent 2025 V2.0" -Force -Verbose
 
-# Function to log off Agent
-#logoff 1
-
-#Start-Sleep -Seconds 3
-
 ## End logging
 Stop-Transcript | Out-Null
-
-Restart-Computer
-
-
-
-
