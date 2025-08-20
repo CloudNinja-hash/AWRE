@@ -45,7 +45,7 @@ Stop-Process -Name chrome -Force
 
 Start-Sleep -Seconds 3
 
-Restart-Computer -Force
-
 ## End logging
 Stop-Transcript | Out-Null
+
+Restart-Computer
