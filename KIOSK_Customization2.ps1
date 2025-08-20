@@ -43,9 +43,5 @@ $Password = $null
 # Close Chrome that was opened earlier
 Stop-Process -Name chrome -Force
 
-Start-Sleep -Seconds 3
-
 ## End logging
 Stop-Transcript | Out-Null
-
-#Restart-Computer
