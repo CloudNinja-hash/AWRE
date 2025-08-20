@@ -16,7 +16,7 @@ $logfilePath = "C:\LOG_Kiosk_Customization2.txt"
 Start-Transcript -Path "$logfilePath" -Append
 
 # Launch Chrome for the first time to clear the Adobe Reader pop-up
-Start-Process -FilePath "C:\Program Files\Google\Chrome\Application\chrome.exe"
+Start-Process -FilePath "C:\Program Files\Google\Chrome\Application\chrome.exe" "https://realogy.okta.com"
 
 # Download the file
 Write-Output "Downloading Autologon64.exe...", ""
@@ -40,17 +40,12 @@ $destinationPath = $null
 $securePWD = $null
 $Password = $null
 
-<#
-# Running Ivanti scans
-Write-Output "", "Running Ivanti Policy Sync...", ""
-Start-Process -FilePath "C:\Program Files (x86)\Ivanti\EPM Agent\SWD\PolicySync.exe"
-
-Write-Output "Running Ivanti Security Scan...", ""
-Start-Process -FilePath "C:\Program Files (x86)\Ivanti\EPM Agent\Patch Management\vulscan.exe" -ArgumentList "/showui"
-#>
-
 # Close Chrome that was opened earlier
 Stop-Process -Name chrome -Force
+
+Start-Sleep -Seconds 3
+
+Restart-Computer -Force
 
 ## End logging
 Stop-Transcript | Out-Null
