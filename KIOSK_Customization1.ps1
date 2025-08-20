@@ -335,38 +335,7 @@ Function SetupRestart () {
     Write-Output "File copied successfully to C:\Users\Public\Desktop"
 
 }
-<##
-# Function to Setup Autologin
-Function SetupAutologin () {
 
-    $securePWD = ConvertTo-SecureString $Password -AsPlainText -Force
-
-    # Define the URL of the download file and the destination path
-    $downloadUrl = "https://dl.dropboxusercontent.com/scl/fi/7grf0rhauao2e0xiust40/Autologon64.exe?rlkey=v2i49l93acyuhlkp1t1fggrpl&st=vqs1m2u3"
-    $destinationPath = "C:\Windows\Temp\Autologon64.exe"
-
-    # Download the file
-    Write-Output "Downloading Autologon64.exe...", ""
-    Invoke-WebRequest -Uri $downloadUrl -OutFile $destinationPath -Verbose
-
-    # Get the Agent account
-    Write-Output "Getting Agent account info...", ""
-    $localAcct = Get-LocalUser -Name "Agent"
-
-    # Change the password
-    Write-Output "Changing Agent password...", ""
-    $localAcct | Set-LocalUser -Password $securePWD -AccountNeverExpires -PasswordNeverExpires $true -Verbose
-
-    Start-Sleep -Seconds 30
-
-    Write-Output "Updating Autologon settings...", ""
-    Start-Process -FilePath $destinationPath -ArgumentList "/accepteula","Agent","WorkGroup",$Password
-
-    $securePWD = $null
-    $Password = $null
-
-}
-##>
 # Function to install Chrome/Edge ADMX files to disable First-Time run and additional shortcuts in C:\Users\Agent\Desktop directory
 Function InstallADMX () {
 
@@ -566,6 +535,47 @@ Function EnableBrowserExtension {
 }
 
 
+# Function to uninstall the Audio device and driver to resolve no sound issue post image.
+Function Uninstall-AudioDevice {
+
+    # Define the device name to search for
+    $deviceName = "Synaptics HD Audio"
+
+    # Get all PnP devices and filter by the device name
+    $device = Get-PnpDevice | Where-Object { $_.FriendlyName -like "$deviceName" }
+
+    # If the device is found, get its hardware ID
+    if ( $device ) {
+        $deviceID = $device.InstanceId
+        $hardwareIDs = Get-PnpDeviceProperty -InstanceId $deviceID -KeyName 'DEVPKEY_Device_HardwareIds'
+        $driverINFPath = Get-PnpDeviceProperty -InstanceId $deviceID -KeyName 'DEVPKEY_Device_DriverInfPath'
+
+        $hardwareDatas = $hardwareIDs.Data
+        $driverINFs = $driverINFPath.Data
+
+        Write-Output "","Device ID: $deviceID"
+        Write-Output "Deleting Audio Device..."
+
+        pnputil.exe /remove-device "$deviceID" /force
+
+        foreach ( $driverINF in $driverINFs ) {
+
+            Write-Output "", "Drive INF: $driverINF"
+            Write-Output "Deleting Drivers..."
+
+            pnputil.exe /delete-driver "$driverINF" /uninstall /force
+
+        }
+
+
+    } else {
+
+        Write-Output "Device '$deviceName' not found."
+
+    }
+
+}
+
 
 ## Start logging of script
 Start-Transcript -Path "$logfilePath" -Append
@@ -607,6 +617,9 @@ ClearBrowser
 # Run function to enable browser extensions for Edge/Chrome
 EnableBrowserExtension
 
+# Run function to uninstall the Audio device and driver to resolve no sound issue post image.
+Uninstall-AudioDevice
+
 # Disable the power button
 Write-Output "Disabling the Power Button...", ""
 powercfg -attributes SUB_BUTTONS PBUTTONACTION -ATTRIB_HIDE
@@ -634,11 +647,11 @@ powercfg -attributes SUB_SLEEP STANDBYIDLE -ATTRIB_HIDE
 Write-Output "Apply the above changes...", ""
 powercfg -setactive SCHEME_CURRENT
 
-# Hide Sleep and Shutdown options from the Start menu
+# Hide Sleep, Shutdown and Lock options from the Start menu
 Write-Output "Hide Sleep and Shutdown options from the Start menu...", ""
 New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\Start\HideSleep" -Name "Value" -Value 1 -PropertyType DWord -Force -Verbose
-
 New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\Start\HideShutDown" -Name "Value" -Value 1 -PropertyType DWord -Force -Verbose
+New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\Start\HideLock" -Name "Value" -Value 1 -PropertyType DWord -Force -Verbose
 
 # Disable Fast Startup
 Write-Output "Disable Fast Startup...", ""
@@ -653,14 +666,13 @@ Write-Output "Refresh the Start menu to apply changes...", ""
 Stop-Process -Name explorer -Force -Verbose
 Start-Process explorer -Verbose
 
-<##
-# Run the function to set up Autologin
-SetupAutologin
-##>
-
 # Update registry to the latest Kiosk version
 New-Item -Path "HKLM:\SOFTWARE\ImageVersion" -Force -Verbose
 New-ItemProperty -Path "HKLM:\SOFTWARE\ImageVersion" -Name "Agent Workstation" -PropertyType String -Value "Agent 2025 V2.0" -Force -Verbose
+
+Start-Sleep -Seconds 3
+
+Restart-Computer -Force
 
 ## End logging
 Stop-Transcript | Out-Null
