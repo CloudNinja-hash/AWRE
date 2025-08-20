@@ -477,7 +477,7 @@ Function SetTimeZone () {
 
 
 # Function to enable browser extensions for Edge/Chrome
-Function EnableBrowserExtension {
+Function EnableBrowserExtension () {
 
     # Define registry path for Edge Extension Install Force List
     $edgeExtPath = "HKLM:\SOFTWARE\Policies\Microsoft\Edge\ExtensionInstallForcelist"
@@ -535,8 +535,8 @@ Function EnableBrowserExtension {
 }
 
 
-# Function to uninstall the Audio device and driver to resolve no sound issue post image.
-Function Uninstall-AudioDevice {
+# Function to uninstall the Audio device and driver to resolve the no sound issue post image.
+Function Uninstall-AudioDevice () {
 
     # Define the device name to search for
     $deviceName = "Synaptics HD Audio"
@@ -576,6 +576,34 @@ Function Uninstall-AudioDevice {
 
 }
 
+# Function to log off Agent
+Function Logoff-Agent () {
+
+    $users = quser | ForEach-Object {
+        $parts = ($_ -replace '\s{2,}', '|') -split '\|'
+        [PSCustomObject]@{
+            Username = $parts[0]
+            SessionName = $parts[1]
+            ID = $parts[2]
+            State = $parts[3]
+            }
+    }
+    
+    $agentSession = $users | Where-Object { $_.Username -eq ">agent" }
+    
+    if ($agentSession) {
+        
+        logoff $agentSession.ID
+        
+        Write-Output "Logged off Agent (Session ID: $($agentSession.ID))"
+    
+    } else {
+    
+        Write-Output "Agent user not found."
+    
+    }
+
+}
 
 ## Start logging of script
 Start-Transcript -Path "$logfilePath" -Append
@@ -669,6 +697,11 @@ Start-Process explorer -Verbose
 # Update registry to the latest Kiosk version
 New-Item -Path "HKLM:\SOFTWARE\ImageVersion" -Force -Verbose
 New-ItemProperty -Path "HKLM:\SOFTWARE\ImageVersion" -Name "Agent Workstation" -PropertyType String -Value "Agent 2025 V2.0" -Force -Verbose
+
+# Function to log off Agent
+Logoff-Agent
+
+Start-Sleep -Seconds 5
 
 ## End logging
 Stop-Transcript | Out-Null
