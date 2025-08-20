@@ -672,7 +672,7 @@ New-ItemProperty -Path "HKLM:\SOFTWARE\ImageVersion" -Name "Agent Workstation" -
 
 Start-Sleep -Seconds 3
 
-Restart-Computer -Force
-
 ## End logging
 Stop-Transcript | Out-Null
+
+Restart-Computer -Force
