@@ -536,7 +536,7 @@ Function EnableBrowserExtension () {
 
 
 # Function to uninstall the Audio device and driver to resolve the no sound issue post image.
-Function Uninstall-AudioDevice () {
+Function UninstallAudioDevice () {
 
     # Define the device name to search for
     $deviceName = "Synaptics HD Audio"
@@ -577,7 +577,7 @@ Function Uninstall-AudioDevice () {
 }
 
 # Function to log off Agent
-Function Logoff-Agent () {
+Function LogoffAgent () {
 
     $users = quser | ForEach-Object {
         $parts = ($_ -replace '\s{2,}', '|') -split '\|'
@@ -646,7 +646,7 @@ ClearBrowser
 EnableBrowserExtension
 
 # Run function to uninstall the Audio device and driver to resolve no sound issue post image.
-Uninstall-AudioDevice
+UninstallAudioDevice
 
 # Disable the power button
 Write-Output "Disabling the Power Button...", ""
@@ -699,7 +699,7 @@ New-Item -Path "HKLM:\SOFTWARE\ImageVersion" -Force -Verbose
 New-ItemProperty -Path "HKLM:\SOFTWARE\ImageVersion" -Name "Agent Workstation" -PropertyType String -Value "Agent 2025 V2.0" -Force -Verbose
 
 # Function to log off Agent
-Logoff-Agent
+LogoffAgent
 
 Start-Sleep -Seconds 3
 
@@ -707,4 +707,5 @@ Start-Sleep -Seconds 3
 Stop-Transcript | Out-Null
 
 Restart-Computer
+
 
