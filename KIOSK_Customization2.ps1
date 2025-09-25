@@ -11,12 +11,41 @@ $destinationPath = "C:\Windows\Temp\Autologon64.exe"
 # Log file location for script
 $logfilePath = "C:\LOG_Kiosk_Customization2.txt" 
 
+function Disable-ToastNotification () {
+
+    # Get the current logged-in user
+    $user = Get-WmiObject -Class Win32_ComputerSystem | Select-Object -ExpandProperty Username
+
+    Write-Output "Current Logged-In User: $user"
+
+    # Create the user object and translate it to the SID
+    $objUser = New-Object System.Security.Principal.NTAccount($user)
+    $strSID = $objUser.Translate([System.Security.Principal.SecurityIdentifier])
+
+    Write-Output "Current Logged-In User SID: $strSID"
+
+    # Define the registry path
+    $registryPath = "registry::hkey_users\$($strSID.Value)\Software\Microsoft\Windows\CurrentVersion\PushNotifications"
+
+    # Create a key to disable toast notification
+    Set-ItemProperty -Path $registryPath -Name "ToastEnabled" -Value 0 -Type DWord -Force
+
+    $user = ""
+    $objUser = ""
+    $strSID = ""
+    $registryPath = ""
+
+}
+
 
 ## Start logging of script
 Start-Transcript -Path "$logfilePath" -Append
 
 # Launch Chrome for the first time to clear the Adobe Reader pop-up
-Start-Process -FilePath "C:\Program Files\Google\Chrome\Application\chrome.exe" "https://realogy.okta.com"
+Start-Process -FilePath "C:\Program Files\Google\Chrome\Application\chrome.exe" "https://okta.anywhere.re"
+
+# Run function to disable toast notification
+Disable-ToastNotification
 
 # Download the file
 Write-Output "Downloading Autologon64.exe...", ""
@@ -42,6 +71,10 @@ $Password = $null
 
 # Close Chrome that was opened earlier
 Stop-Process -Name chrome -Force
+
+Start-Sleep -Seconds 3
+
+Restart-Computer -Force
 
 ## End logging
 Stop-Transcript | Out-Null
