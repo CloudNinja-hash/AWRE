@@ -149,44 +149,64 @@ function Invoke-ChromeUninstallOrRemove {
         $profile = Get-CimInstance Win32_UserProfile | Where-Object { $_.LocalPath -eq $UserRoot }
         $sid = $profile.SID
         if (-not $sid) { throw "SID not found for $UserRoot" }
-
-        $hkuPath = "Registry::HKEY_USERS\$sid"
-        $hiveWasLoaded = $false
-
-        if (-not (Test-Path $hkuPath)) {
+    
+        $existingRoot = "Registry::HKEY_USERS\$sid"
+    
+        $weMounted = $false
+        $mountedRoot = $existingRoot
+    
+        if (-not (Test-Path $existingRoot)) {
+            # Offline profile: mount the hive under a temporary name to avoid conflicts
             $ntuser = Join-Path $UserRoot 'NTUSER.DAT'
             if (Test-Path $ntuser) {
-                Write-Verbose "Loading user hive HKU\$sid from $ntuser"
-                & reg.exe load "HKU\$sid" "$ntuser" | Out-Null
-                $hiveWasLoaded = $true
-                Start-Sleep -Milliseconds 200
-            }
-        }
-
-        if (Test-Path $hkuPath) {
-            if ($ScrubRegistry) {
-                $regTargets = @(
-                    "$hkuPath\Software\Google\Chrome",
-                    "$hkuPath\Software\Microsoft\Windows\CurrentVersion\Uninstall\Google Chrome"
-                )
-                if ($RemoveUserGoogleUpdate) {
-                    $regTargets += "$hkuPath\Software\Google\Update"
+                # Unique, safe mount name
+                $mountName = "_TMP_" + ($sid -replace '[^A-Za-z0-9]', '_')
+                $mountKey  = "HKU\$mountName"
+                $mountedRoot = "Registry::$mountKey"
+    
+                Write-Verbose "Loading user hive into $mountKey from $ntuser"
+                $loadResult = & reg.exe load $mountKey "$ntuser" 2>&1
+                if ($LASTEXITCODE -ne 0) {
+                    throw "Failed to load hive $mountKey ($($loadResult | Out-String))"
                 }
-                foreach ($rk in $regTargets) {
-                    if (Test-Path $rk) {
-                        if ($PSCmdlet.ShouldProcess($rk, "Remove-Item -Recurse -Force")) {
-                            Write-Verbose "Removing registry key $rk"
-                            Remove-Item -Path $rk -Recurse -Force -ErrorAction SilentlyContinue
-                        }
+                $weMounted = $true
+                Start-Sleep -Milliseconds 200
+            } else {
+                Write-Verbose "No NTUSER.DAT found for $UserRoot; skipping registry cleanup."
+            }
+        } else {
+            Write-Verbose "Hive already mounted at HKU\$sid (likely an active user). Will not attempt unload."
+        }
+    
+        if (Test-Path $mountedRoot -and $ScrubRegistry) {
+            $regTargets = @(
+                "$mountedRoot\Software\Google\Chrome",
+                "$mountedRoot\Software\Microsoft\Windows\CurrentVersion\Uninstall\Google Chrome"
+            )
+            if ($RemoveUserGoogleUpdate) {
+                $regTargets += "$mountedRoot\Software\Google\Update"
+            }
+    
+            foreach ($rk in $regTargets) {
+                if (Test-Path $rk) {
+                    if ($PSCmdlet.ShouldProcess($rk, "Remove-Item -Recurse -Force")) {
+                        Write-Verbose "Removing registry key $rk"
+                        Remove-Item -Path $rk -Recurse -Force -ErrorAction SilentlyContinue
                     }
                 }
-                $result.RegistryCleaned = $true
             }
+            $result.RegistryCleaned = $true
         }
-
-        if ($hiveWasLoaded) {
-            Write-Verbose "Unloading user hive HKU\$sid"
-            & reg.exe unload "HKU\$sid" | Out-Null
+    
+        # Only unload if we mounted it in this run
+        if ($weMounted) {
+            $mountKey = ($mountedRoot -replace '^Registry::', '')
+            Write-Verbose "Unloading hive $mountKey"
+            $unloadResult = & reg.exe unload $mountKey 2>&1
+            if ($LASTEXITCODE -ne 0) {
+                # Don't fail the script; just record the error
+                $result.Errors += "Registry unload: $($unloadResult | Out-String)"
+            }
         }
     } catch {
         $result.Errors += "Registry cleanup: $($_.Exception.Message)"
@@ -228,7 +248,7 @@ Write-Host "==== Per-User Chrome Removal Summary ====" -ForegroundColor Cyan
 $allResults |
     Sort-Object User |
     Select-Object User, Found, UninstallAttempted, Uninstalled, FolderRemoved, RegistryCleaned,
-                  @{N='ErrorsCount';E={($_.Errors | Where-Object {$_}) .Count}} |
+                  @{N='ErrorsCount';E={($_.Errors | Where-Object {$_}).Count}} |
     Format-Table -AutoSize
 
 # Optional: emit detailed errors (if any)
