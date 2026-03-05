@@ -2,9 +2,9 @@
 Function InstallIvanti () {
     
     # Define the URL of the download file and the destination path
-    $downloadUrl = "https://dl.dropboxusercontent.com/scl/fi/lp57jpn0aqswrz815im71/KIOSK-WIN-Agent-2024_SU3.zip?rlkey=eguln78d92u8of6ig1wj9qhcp&st=08k5mcgl=1"
-    $destinationPath = "C:\Windows\Temp\KIOSK_WIN_Agent_2024_SU3.zip"
-    $extractPath = "C:\Windows\Temp\KIOSK_WIN_Agent_2024_SU3"
+    $downloadUrl = "https://dl.dropboxusercontent.com/scl/fi/xxpc5vjcbwdtujdtpxv1t/KIOSK-WIN-Agent-2024_SU5.zip?rlkey=24fprw9vtyo3f4wsbku9hj1e2&st=1isau1n3=1"
+    $destinationPath = "C:\Windows\Temp\KIOSK_WIN_Agent_2024_SU5.zip"
+    $extractPath = "C:\Windows\Temp\KIOSK_WIN_Agent_2024_SU5"
 
     # Download the file
     Write-Output "Downloading Ivanti Agent installer...", ""
