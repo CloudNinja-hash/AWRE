@@ -605,6 +605,26 @@ Function LogoffAgent () {
 
 }
 
+# Function to disable Fast Startup
+Function DisableFastStartup () {
+
+    # Path to Power settings in Registry
+    $powerRegPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Power"
+    $hiberEnabled = "HiberbootEnabled"
+    $hiberDefault = "HibernateEnabledDefault"
+    
+    try {
+        # Set Fast Startup (HiberbootEnabled) to 0 (Disabled)
+        New-ItemProperty -Path $powerRegPath -Name $hiberEnabled -Value 0 -PropertyType DWord -Force
+        New-ItemProperty -Path $powerRegPath -Name $hiberDefault -Value 0 -PropertyType DWord -Force
+        Write-Host "Success: Fast Startup has been disabled." -ForegroundColor Green
+    }
+    catch {
+        Write-Error "Failed to update registry: $_"
+    }
+
+}
+
 ## Start logging of script
 Start-Transcript -Path "$logfilePath" -Append
 
@@ -683,7 +703,8 @@ New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\Start\Hid
 
 # Disable Fast Startup
 Write-Output "Disable Fast Startup...", ""
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\Start\HideShutDown" -Name "HiberbootEnabled" -Value 0 -Type DWORD -Force -Verbose
+DisableFastStartup
+##Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\Start\HideShutDown" -Name "HiberbootEnabled" -Value 0 -Type DWORD -Force -Verbose
 
 # Disable UAC
 Write-Output "Disable UAC...", ""
