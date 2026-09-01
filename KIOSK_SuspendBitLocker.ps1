@@ -1,4 +1,4 @@
-# Requires running as Administrator
+﻿# Requires running as Administrator
 $mountPoint = "C:"
 
 # 1. Check current BitLocker status
