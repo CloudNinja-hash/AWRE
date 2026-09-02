@@ -41,6 +41,10 @@ function Disable-ToastNotification () {
 ## Start logging of script
 Start-Transcript -Path "$logfilePath" -Append
 
+# Start and Enable Windows Update service
+Set-Service -Name "wuauserv" -StartupType Automatic
+Start-Service -Name "wuauserv" -ErrorAction SilentlyContinue
+
 # Launch Chrome for the first time to clear the Adobe Reader pop-up
 Start-Process -FilePath "C:\Program Files\Google\Chrome\Application\chrome.exe" "https://okta.anywhere.re"
 
